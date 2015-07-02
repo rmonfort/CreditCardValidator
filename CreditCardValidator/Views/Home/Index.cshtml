@@ -11,11 +11,13 @@
 
 @using (Html.BeginForm())
 {
+    @Html.AntiForgeryToken()
+    
     <div class="form-horizontal">
         <div class="form-group">
             @Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.CardType, (SelectList)ViewBag.CreditCardType, new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.CardType, Model.CardTypes, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.CardType, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -24,6 +26,12 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.CreditCardNumber, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.CreditCardNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Result, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Result, new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group">
