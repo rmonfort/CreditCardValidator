@@ -41,12 +41,27 @@ namespace CreditCardValidator.Helpers
 
         public static bool IsValidMastercard(ulong? creditCardNumber)
         {
-            throw new NotImplementedException();
+            if (creditCardNumber > 0 && HasCorrectNumberOfDigits(creditCardNumber, 16))
+            {
+                if (HasCorrectPrefix(creditCardNumber, CardType.Mastercard) && PassesLuhn(creditCardNumber.ToString()))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool IsValidVisa(ulong? creditCardNumber)
         {
-            throw new NotImplementedException();
+            // Visa can have a length of 13 or 16
+            if (creditCardNumber > 0 && (HasCorrectNumberOfDigits(creditCardNumber, 16) || HasCorrectNumberOfDigits(creditCardNumber, 13)))
+            {
+                if (HasCorrectPrefix(creditCardNumber, CardType.Visa) && PassesLuhn(creditCardNumber.ToString()))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool HasCorrectNumberOfDigits(ulong? number, int requiredNumberOfDigits)
@@ -65,10 +80,9 @@ namespace CreditCardValidator.Helpers
                 {
                     return true;
                 }
-                return false;
             }
 
-            if (cardType == CardType.Discover)
+            else if (cardType == CardType.Discover)
             {
                 // IIN for Discover : 65
                 int prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 2));
@@ -79,7 +93,7 @@ namespace CreditCardValidator.Helpers
                 
                 // INN range for Discover : 644-649 
                 prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 3));
-                if (prefix > 644 && prefix < 649)
+                if (prefix >= 644 && prefix <= 649)
                 {
                     return true;
                 }
@@ -93,21 +107,38 @@ namespace CreditCardValidator.Helpers
 
                 // INN range for Discover : 622126-622925
                 prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 6));
-                if (prefix > 622126 && prefix < 622925)
+                if (prefix >= 622126 && prefix <= 622925)
                 {
                     return true;       
                 }
-                return false;
             }
 
-            if (cardType == CardType.Mastercard)
+            else if (cardType == CardType.Mastercard)
             {
-                return true;
+                // INN range for Mastercard : 51-55 
+                int prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 2));
+                if (prefix >= 51 && prefix <= 55)
+                {
+                    return true;
+                }
+
+                // INN range for Mastercard : 222100-272099
+                // Active on 10/14/2016
+                prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 6));
+                if (prefix >= 222100 && prefix <= 272099)
+                {
+                    return true;
+                }
             }
 
-            if (cardType == CardType.Visa)
+            else if (cardType == CardType.Visa)
             {
-                return true;
+                // IIN for Visa : 4
+                int prefix = Convert.ToInt32(creditCardNumber.ToString().Substring(0, 1));
+                if (prefix == 4)
+                {
+                    return true;
+                }
             }
 
             return false;
