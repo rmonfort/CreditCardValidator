@@ -145,7 +145,7 @@ namespace CreditCardValidator.Helpers
         }
 
         // Luhn algorithm
-        public static bool PassesLuhn(this string creditCardNumber)
+        private static bool PassesLuhn(this string creditCardNumber)
         {
             return PassesLuhn(creditCardNumber.Select(c => c - '0').ToArray());
         }
